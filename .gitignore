@@ -207,6 +207,9 @@ web_modules/
 # TypeScript cache
 *.tsbuildinfo
 
+# NX Directory
+.nx/
+
 # Optional npm cache directory
 .npm
 
