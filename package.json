@@ -4,7 +4,20 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:lib": "npx nx run-many --target=build -p @sektek/common"
+  },
+  "devDependencies": {
+    "@nx/js": "17.2.7",
+    "@sektek/eslint-plugin": "^0.1.0",
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
+    "chai": "^4.3.10",
+    "eslint": "^8.56.0",
+    "mocha": "^10.2.0",
+    "nx": "17.2.7",
+    "prettier": "^3.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
   },
   "workspaces": [
     "apps/*",
