@@ -1,0 +1,14 @@
+{
+  "name": "research-dispatcher",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "workspaces": [
+    "apps/*",
+    "configs/*",
+    "libs/*"
+  ]
+}
