@@ -3,6 +3,7 @@ module.exports = {
     es2020: true,
     node: true,
   },
+  ignorePatterns: ['**/node_modules/*', '**/dist/*'],
   extends: [
     'eslint:recommended',
     'plugin:prettier/recommended',
