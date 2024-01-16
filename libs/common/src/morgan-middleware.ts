@@ -1,7 +1,7 @@
-import { Response } from 'express';
 import morgan, { TokenIndexer } from 'morgan';
-import { logger } from './logger';
 import { Request } from './request';
+import { Response } from 'express';
+import { logger } from './logger';
 
 const stream = {
   write: (message: string) => logger.http(message),
