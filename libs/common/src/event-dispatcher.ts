@@ -1,12 +1,20 @@
-import { Event } from './event';
-import { EventHandlerFn } from './event-handler';
+import { Event } from './event.js';
+import { EventHandlerFn } from './event-handler.js';
+import { isPrimitive } from './utils.js';
+
+export type EventDispatcherFn<T extends Event> = EventHandlerFn<T, void>;
 
 export interface EventDispatcher<T extends Event> {
-  send: EventHandlerFn<T, void>;
+  dispatch: EventDispatcherFn<T>;
 }
 
-export class NullEventDispatcher {
-  static send(): Promise<void> {
-    return Promise.resolve();
-  }
-}
+export const dispatcherToEventHandlerFn = <T extends Event>(
+  dispatcher: EventDispatcher<T>,
+): EventDispatcherFn<T> => dispatcher.dispatch.bind(dispatcher);
+
+export const isEventDispatcher = (
+  obj: unknown,
+): obj is EventDispatcher<Event> =>
+  !!obj &&
+  !isPrimitive(obj) &&
+  (obj as EventDispatcher<Event>).dispatch instanceof Function;

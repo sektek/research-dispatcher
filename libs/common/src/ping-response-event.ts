@@ -1,4 +1,4 @@
-import { Event } from './event';
+import { Event } from './event.js';
 
 type PingResponseData = {
   receivedAt: number;

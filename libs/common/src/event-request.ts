@@ -1,5 +1,5 @@
-import { Event } from './event';
-import { Request } from './request';
+import { Event } from './event.js';
+import { Request } from './request.js';
 
 export interface EventRequest<T extends Event> extends Request {
   body: T;

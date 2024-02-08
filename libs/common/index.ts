@@ -1,1 +1,1 @@
-export * from './src/common';
+export * from './src/common.js';

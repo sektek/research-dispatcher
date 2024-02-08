@@ -1,5 +1,5 @@
-import { Event } from './event';
-import { EventHandlerFn } from './event-handler';
+import { Event } from './event.js';
+import { EventHandlerFn } from './event-handler.js';
 
 export type EventProcessorFn<T extends Event, R extends Event> = EventHandlerFn<
   T,

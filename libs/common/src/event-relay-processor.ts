@@ -1,38 +1,52 @@
-import { Event } from './event';
-import { EventProcessor } from './event-processor';
-import { EventRouter } from './event-router';
-import { PromiseDispatcher } from './promise-dispatcher';
+import {
+  AbstractEventHandlingService,
+  EventHandlingServiceOptions,
+} from './event-service.js';
+import {
+  EventRouteDecider,
+  EventRouter,
+  SingleUseRouter,
+} from './event-router.js';
+import { Event } from './event.js';
+import { EventHandler } from './event-handler.js';
+import { PromiseChannel } from './promise-channel.js';
 
 export type RouteBuilder<T extends Event> = (event: T) => string;
 
-const DEFAULT_ROUTE_BUILDER: RouteBuilder<Event> = event => event.id;
+const DEFAULT_ROUTE_DECIDER: EventRouteDecider<Event> = async event => event.id;
 
-export interface EventRelayProcessorOptions<T extends Event, R extends Event> {
-  router: EventRouter<R>;
-  routeBuilder: RouteBuilder<T>;
+export interface EventRelayProcessorOptions<T extends Event, R extends Event>
+  extends EventHandlingServiceOptions<T, R> {
+  router?: EventRouter<R>;
+  routeDecider?: EventRouteDecider<T>;
 }
 
-const DEFAULT_OPTIONS: Partial<EventRelayProcessorOptions<Event, Event>> = {
-  routeBuilder: DEFAULT_ROUTE_BUILDER,
-};
-
 export class EventRelayProcessor<T extends Event, R extends Event>
-  implements EventProcessor<T, R>
+  extends AbstractEventHandlingService<T, R>
+  implements EventHandler<T, R>
 {
-  private readonly eventRouter: EventRouter<R>;
+  #eventRouter: EventRouter<R>;
+  #routeDecider: EventRouteDecider<T>;
 
   constructor(options: EventRelayProcessorOptions<T, R>) {
-    options = { ...DEFAULT_OPTIONS, ...options };
+    super(options);
 
-    this.eventRouter = options.router;
+    this.#routeDecider = options.routeDecider || DEFAULT_ROUTE_DECIDER;
+    this.#eventRouter =
+      options.router ||
+      new SingleUseRouter<R>({
+        routeDecider: DEFAULT_ROUTE_DECIDER,
+      });
   }
 
-  async process(event: T): Promise<R> {
-    const route = event.id;
-    const dispatcher = new PromiseDispatcher<R>();
+  async handle(event: T): Promise<R> {
+    const route = await this.#routeDecider(event);
+    const channel = new PromiseChannel<R>();
 
-    this.eventRouter.add(route, dispatcher);
+    this.#eventRouter.add(route, channel);
 
-    return await dispatcher.get();
+    await super.handle(event);
+
+    return await channel.get();
   }
 }

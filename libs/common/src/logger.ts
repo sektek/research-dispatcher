@@ -1,4 +1,4 @@
-import winston from 'winston';
+import winston, { Logger } from 'winston';
 
 const levels = {
   error: 0,
@@ -35,7 +35,7 @@ const format = winston.format.combine(
 
 const transports = [new winston.transports.Console()];
 
-export const logger = winston.createLogger({
+export const logger: Logger = winston.createLogger({
   level: level(),
   levels,
   format,

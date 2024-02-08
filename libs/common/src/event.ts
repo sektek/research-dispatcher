@@ -5,15 +5,3 @@ export type Event = {
   type: string;
   data: EventData;
 };
-
-export class QuickTest {
-  #id = 'quick-test';
-
-  constructor() {
-    this.#id = 'quick-test';
-  }
-
-  get id() {
-    return this.#id;
-  }
-}

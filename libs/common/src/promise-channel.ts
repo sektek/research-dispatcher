@@ -1,7 +1,7 @@
-import { Event } from './event';
-import { EventDispatcher } from './event-dispatcher';
+import { Event } from './event.js';
+import { EventChannel } from './event-channel.js';
 
-export class PromiseDispatcher<T extends Event> implements EventDispatcher<T> {
+export class PromiseChannel<T extends Event> implements EventChannel<T> {
   private promise: Promise<T>;
   resolve?: (value: T | PromiseLike<T>) => void;
   reject?: (reason?: unknown) => void;
