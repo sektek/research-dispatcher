@@ -15,7 +15,7 @@ module.exports = {
   ],
   overrides: [
     {
-      files: ['.eslintrc.js'],
+      files: ['.eslintrc.js', '.eslintrc.cjs'],
       rules: {
         'filenames/match-regex': 'off',
       }
