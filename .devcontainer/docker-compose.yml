@@ -11,41 +11,48 @@ services:
     command: sleep infinity
     volumes:
       - ../..:/workspaces:cached
+      - home:/home/node
     networks:
       - back-tier
       - front-tier
 
-  # public-web:
-  #   container_name: public-web
-  #   extends:
-  #     file: docker-compose.base.yml
-  #     service: node-app-base
-  #   command: npx nx run @sektek/public-web:start:dev
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - back-tier
-  #     - front-tier
+  public-web:
+    container_name: public-web
+    extends:
+      file: docker-compose.base.yml
+      service: node-app-base
+    command: npx nx run @sektek/public-web:start:dev
+    networks:
+      - back-tier
+      - front-tier
 
-  # dispatcher:
-  #   container_name: dispatcher
-  #   extends:
-  #     file: docker-compose.base.yml
-  #     service: node-app-base
-  #   command: npx nx run @sektek/dispatcher:start:dev
-  #   networks:
-  #     - back-tier
+  dispatcher:
+    container_name: dispatcher
+    depends_on:
+      - rabbitmq
+    extends:
+      file: docker-compose.base.yml
+      service: node-app-base
+    command: npx nx run @sektek/dispatcher:start:dev
+    networks:
+      - back-tier
 
-  # ping-listener:
-  #   container_name: ping-listener
-  #   extends:
-  #     file: docker-compose.base.yml
-  #     service: node-app-base
-  #   command: npx nx run @sektek/ping-listener:start:dev
+  ping-listener:
+    container_name: ping-listener
+    depends_on:
+      - rabbitmq
+    extends:
+      file: docker-compose.base.yml
+      service: node-app-base
+    command: npx nx run @sektek/ping-listener:start:dev
+    networks:
+      - back-tier
 
   rabbitmq:
-    image: rabbitmq:3.12
+    image: rabbitmq:3-management
     container_name: dispatcher-mq
+    ports:
+      - "15672:15672"
     networks:
       - back-tier
 
@@ -54,12 +61,11 @@ services:
     container_name: dispatcher-redis
     volumes:
       - redis:/data
-    ports:
-      - "6379:6379"
     networks:
       - back-tier
 
 volumes:
+  home: {}
   redis: {}
 
 networks:
