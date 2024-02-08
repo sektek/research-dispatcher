@@ -2,6 +2,7 @@
   "verbose": true,
   "ignore": ["**/*.spec.ts"],
   "watch": [
-    "src"
+    "index.ts",
+    "src/**/*.ts"
   ]
 }
