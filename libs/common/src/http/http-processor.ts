@@ -3,7 +3,7 @@ import {
   EventHandlingServiceOptions,
 } from '../event-service.js';
 import { Event } from '../event.js';
-import { EventRequest } from '../event-request.js';
+import { EventRequest } from './event-request.js';
 import { Response } from 'express';
 
 type ResponseSerializer<R extends Event> = (event: R) => PromiseLike<R>;

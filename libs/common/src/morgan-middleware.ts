@@ -1,5 +1,5 @@
 import morgan, { TokenIndexer } from 'morgan';
-import { Request } from './request.js';
+import { Request } from './http/request.js';
 import { Response } from 'express';
 import { logger } from './logger.js';
 
