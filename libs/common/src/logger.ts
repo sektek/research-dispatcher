@@ -33,11 +33,10 @@ const format = winston.format.combine(
   ),
 );
 
-const transports = [new winston.transports.Console()];
+const transports = [new winston.transports.Console({ format })];
 
 export const logger: Logger = winston.createLogger({
   level: level(),
   levels,
-  format,
   transports,
 });

@@ -4,6 +4,7 @@ export * from './event.js';
 export * from './event-dispatcher.js';
 export * from './event-handler.js';
 export * from './event-relay-processor.js';
+export * from './winston-middleware.js';
 export * from './http/event-request.js';
 export * from './event-router.js';
 export * from './http/http-dispatcher.js';
