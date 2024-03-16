@@ -37,6 +37,7 @@
     }
   },
 	"remoteEnv": {
-		"HOST_PROJECT_PATH": "${localWorkspaceFolder}"
+		"HOST_PROJECT_PATH": "${localWorkspaceFolder}",
+    "LOKI_ADDR": "http://loki:3100"
 	}
 }
