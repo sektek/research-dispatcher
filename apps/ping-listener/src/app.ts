@@ -1,4 +1,10 @@
-import { AmqpDispatcher, AmqpGateway, Event, PingRequestEvent, PingResponseEvent, SimpleProcessor } from '@sektek/common';
+import {
+  AmqpDispatcher,
+  AmqpGateway,
+  PingRequestEvent,
+  PingResponseEvent,
+  SimpleProcessor,
+} from '@sektek/common';
 
 const amqpDispatcher = await AmqpDispatcher.from({
   url: 'amqp://dispatcher-mq:5672',

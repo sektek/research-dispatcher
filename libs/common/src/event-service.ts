@@ -6,6 +6,7 @@ import {
   EventReturnType,
   isEventHandler,
 } from './event-handler.js';
+import { Tracer, trace } from '@opentelemetry/api';
 import { Event } from './event.js';
 import { Logger } from 'winston';
 import { logger } from './logger.js';
@@ -34,10 +35,12 @@ const generateName = (prefix: string): string => {
 export abstract class AbstractEventService {
   #logger: Logger;
   #name: string;
+  #tracer: Tracer;
 
   constructor(opts: EventServiceOptions) {
     this.#name = generateName(opts.name || this.constructor.name);
     this.#logger = (opts.logger || logger).child({ component: this.name });
+    this.#tracer = trace.getTracer('common', '0.1.0');
   }
 
   protected get logger(): Logger {
@@ -46,6 +49,10 @@ export abstract class AbstractEventService {
 
   get name(): string {
     return this.#name;
+  }
+
+  get tracer(): Tracer {
+    return this.#tracer;
   }
 }
 
@@ -71,11 +78,17 @@ export abstract class AbstractEventHandlingService<
   }
 
   async handle(event: T): Promise<R> {
-    this.logger.info(
-      `${this.name} - Event (${event.type}) ${event.id} received`,
-    );
-    this.logger.debug(event);
-    return this.handler(event);
+    return this.tracer.startActiveSpan(this.name, span => {
+      try {
+        this.logger.info(
+          `${this.name} - Event (${event.type}) ${event.id} received`,
+        );
+        this.logger.debug(event);
+        return this.handler(event);
+      } finally {
+        span.end();
+      }
+    });
   }
 }
 
