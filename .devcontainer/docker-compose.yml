@@ -1,5 +1,3 @@
-version: "3.8"
-
 name: research-dispatcher
 
 services:
@@ -21,6 +19,8 @@ services:
     extends:
       file: docker-compose.base.yml
       service: node-app-base
+    environment:
+      - SERVICE_NAME=public-web
     command: npx nx run @sektek/public-web:start:dev
     networks:
       - back-tier
@@ -33,6 +33,8 @@ services:
     extends:
       file: docker-compose.base.yml
       service: node-app-base
+    environment:
+      - SERVICE_NAME=dispatcher
     command: npx nx run @sektek/dispatcher:start:dev
     networks:
       - back-tier
@@ -44,6 +46,8 @@ services:
     extends:
       file: docker-compose.base.yml
       service: node-app-base
+    environment:
+      - SERVICE_NAME=ping-listener
     command: npx nx run @sektek/ping-listener:start:dev
     networks:
       - back-tier
