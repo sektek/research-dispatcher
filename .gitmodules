@@ -1,0 +1,6 @@
+[submodule "third-party/opentelemetry-js-contrib"]
+	path = third-party/opentelemetry-js-contrib
+	url = https://github.com/open-telemetry/opentelemetry-js-contrib.git
+[submodule "third-party/opentelemetry-js"]
+	path = third-party/opentelemetry-js
+	url = https://github.com/open-telemetry/opentelemetry-js.git
