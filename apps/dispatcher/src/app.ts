@@ -17,7 +17,9 @@ const httpGateway = new HttpGateway({
   handler: amqpDispatcher,
 });
 
-const httpDispatcher = new HttpDispatcher({ url: 'http://public-web:3000/dispatch' });
+const httpDispatcher = new HttpDispatcher({
+  url: 'http://public-web:3000/dispatch',
+});
 
 const amqpGateway = await AmqpGateway.from({
   url: 'amqp://dispatcher-mq:5672',
