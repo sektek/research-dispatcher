@@ -23,8 +23,7 @@ import { WinstonInstrumentation } from '@opentelemetry/instrumentation-winston';
 import { env } from 'process';
 
 const DEFAULT_VERSION = '0.1.0';
-// const HTTP_REQUEST_IGNORE_PORTS = [3100, 4318];
-const HTTP_REQUEST_IGNORE_PORTS = [] as Array<number>;
+const HTTP_REQUEST_IGNORE_PORTS = [3100, 4318];
 
 type TelemetryConfig = {
   serviceName?: string;
@@ -43,7 +42,8 @@ const DEFAULT_CONFIG = {
   instrumentations: [
     new AmqplibInstrumentation(),
     new HttpInstrumentation({
-      // ignoreOutgoingRequestHook: req => req.port === 3100 || req.port === 4318,
+      ignoreOutgoingRequestHook: req =>
+        HTTP_REQUEST_IGNORE_PORTS.includes(Number(req.port)),
     }),
     new ExpressInstrumentation(),
     new WinstonInstrumentation(),
