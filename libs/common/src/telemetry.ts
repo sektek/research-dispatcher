@@ -19,6 +19,7 @@ import { OTLPExporterNodeConfigBase } from '@opentelemetry/otlp-exporter-base';
 // import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { Resource } from '@opentelemetry/resources';
+import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici';
 import { WinstonInstrumentation } from '@opentelemetry/instrumentation-winston';
 import { env } from 'process';
 
@@ -28,7 +29,7 @@ const HTTP_REQUEST_IGNORE_PORTS = [3100, 4318];
 type TelemetryConfig = {
   serviceName?: string;
   serviceVersion?: string;
-  instrumentations?: InstrumentationBase[];
+  instrumentations?: unknown[];
   traceExporterConfig?: OTLPExporterNodeConfigBase;
   debug?: boolean;
 };
@@ -47,13 +48,14 @@ const DEFAULT_CONFIG = {
     }),
     new ExpressInstrumentation(),
     new WinstonInstrumentation(),
+    new UndiciInstrumentation(),
   ],
   debug: false,
 };
 
 export class Telemetry {
   #tracerProvider: BasicTracerProvider;
-  #instrumentations: InstrumentationBase[];
+  #instrumentations: unknown;
 
   constructor(config: TelemetryConfig = {}) {
     config = { ...DEFAULT_CONFIG, ...config };
@@ -78,7 +80,7 @@ export class Telemetry {
     this.#tracerProvider.register();
     registerInstrumentations({
       tracerProvider: this.#tracerProvider,
-      instrumentations: this.#instrumentations,
+      instrumentations: this.#instrumentations as InstrumentationBase[],
     });
   }
 }
