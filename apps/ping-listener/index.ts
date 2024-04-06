@@ -1,3 +1,5 @@
+import { telemetry } from './src/instrumentation.js';
+// eslint-disable-next-line sort-imports
 import {
   errorLogMiddleware,
   logMiddleware,
@@ -9,8 +11,6 @@ import { amqpGateway } from './src/app.js';
 import bodyParser from 'body-parser';
 import express from 'express';
 import { format } from 'winston';
-import { telemetry } from './src/instrumentation.js';
-import { traceMiddleware } from './src/trace-middleware.js';
 
 logger.add(
   new LokiTransport({
@@ -25,7 +25,6 @@ telemetry.start();
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(requestIdMiddleware);
-app.use(traceMiddleware);
 app.use(bodyParser.json());
 app.use(logMiddleware);
 
