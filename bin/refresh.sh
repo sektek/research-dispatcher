@@ -1,0 +1,10 @@
+docker pull grafana/agent:latest
+docker pull grafana/grafana:latest
+docker pull grafana/loki:latest
+docker pull grafana/mimir:latest
+docker pull grafana/tempo:latest
+docker pull mcr.microsoft.com/devcontainers/typescript-node:20-bookworm
+docker pull minio/minio:latest
+docker pull node:20
+docker pull rabbitmq:3-management
+docker pull redis:7.2
