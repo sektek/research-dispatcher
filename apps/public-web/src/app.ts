@@ -24,5 +24,19 @@ const httpProcessor = new HttpProcessor({
 });
 const httpResponseGateway = new HttpGateway({ handler: router });
 
+const httpPingProcessor = new HttpProcessor({
+  handler: async event => {
+    return {
+      ...event,
+      type: 'PingResponse',
+      data: {
+        ...(event.data ?? {}),
+        receivedAt: new Date().getTime(),
+      },
+    };
+  },
+});
+
 app.post('/', httpProcessor.requestHandler);
 app.post('/dispatch', httpResponseGateway.requestHandler);
+app.post('/ping', httpPingProcessor.requestHandler);
