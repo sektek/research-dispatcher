@@ -1,4 +1,4 @@
-FROM grafana/logcli:2.9.5-amd64 as logcli
+FROM grafana/logcli:2.9.6-amd64 as logcli
 
 FROM mcr.microsoft.com/devcontainers/typescript-node:20-bookworm
 
