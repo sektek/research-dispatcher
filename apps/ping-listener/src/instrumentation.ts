@@ -1,3 +1,3 @@
 import { Telemetry } from '@sektek/common';
 
-export const telemetry = new Telemetry({ debug: true });
+export const telemetry = new Telemetry();
