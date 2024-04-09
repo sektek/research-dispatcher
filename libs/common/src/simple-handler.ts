@@ -2,7 +2,11 @@ import {
   AbstractEventHandlingService,
   EventHandlingServiceOptions,
 } from './event-service.js';
-import { EventHandler, EventHandlerFn, EventReturnType } from './event-handler.js';
+import {
+  EventHandler,
+  EventHandlerFn,
+  EventReturnType,
+} from './event-handler.js';
 import { Event } from './event.js';
 
 export class SimpleHandler<T extends Event, R extends EventReturnType>
