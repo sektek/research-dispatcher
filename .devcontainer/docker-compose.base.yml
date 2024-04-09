@@ -8,6 +8,7 @@ services:
     environment:
       - DEV_PLATFORM=node
       - OLTP_TRACE_EXPORTER_URL=http://agent:4318/v1/traces
+      - LOKI_URL=http://loki:3100
     volumes:
       - ../..:/workspaces:cached
       - ../:/app

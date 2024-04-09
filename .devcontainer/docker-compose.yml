@@ -72,17 +72,22 @@ services:
     container_name: grafana
     image: grafana/grafana:latest
     restart: unless-stopped
+    depends_on:
+      - loki
+      - mimir
+      - tempo
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_DISABLE_LOGIN_FORM: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
       GF_USERS_DEFAULT_THEME: "light"
       GF_FEATURE_TOGGLES_ENABLE: "traceqlEditor"
+    volumes:
+      - ./docker/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/provisioning-datasources.yaml:ro
     ports:
       - "3000:3000"
     networks:
       - back-tier
-      - front-tier
 
   loki:
     container_name: loki
@@ -111,7 +116,6 @@ services:
       - ./docker/agent/config.river:/etc/agent/config.river
     networks:
       - back-tier
-      - front-tier
 
   minio:
     container_name: minio
