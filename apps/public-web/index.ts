@@ -6,19 +6,9 @@ import {
   logger,
   requestIdMiddleware,
 } from '@sektek/common';
-import LokiTransport from 'winston-loki';
 import bodyParser from 'body-parser';
 import express from 'express';
-import { format } from 'winston';
 import { app as publicApp } from './src/app.js';
-
-logger.add(
-  new LokiTransport({
-    host: 'http://loki:3100',
-    format: format.json(),
-    labels: { app: 'public-web' },
-  }),
-);
 
 telemetry.start();
 
