@@ -22,8 +22,6 @@ datasources:
     jsonData:
       tracesToLogsV2:
         datasourceUid: Loki
-        spanStartTimeShift: '1h'
-        spanEndTimeShift: '-1h'
         filterByTraceID: true
         filterBySpanID: true
 
