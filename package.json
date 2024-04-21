@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@nx/js": "17.2.7",
-    "@sektek/eslint-plugin": "^0.1.0",
+    "@sektek/eslint-plugin": "^1.0.1",
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
     "chai": "^4.3.10",
@@ -21,7 +21,6 @@
   },
   "workspaces": [
     "apps/*",
-    "configs/*",
     "libs/*"
   ]
 }
