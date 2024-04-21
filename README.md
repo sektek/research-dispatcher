@@ -12,6 +12,8 @@ This is a rather simple form. The three tiers exist but the only operation being
 
 During the development of these pieces I found debugging across the different services to be painful. I wanted to be able to centralize logs to a single platform where I could quickly query for a single event to see what was occurring. This lead to building out a Grafana stack to utilize Loki and Tempo for tracing requests across the stack.
 
+Everything is using OpenTelemetry for tracking. Haven't setup any kind of metrics yet. So in theory, it should be possible to swap out Grafana for another OpenTelemetry consumer.
+
 ## Using
 
 This project is setup to run within a DevContainer and launches multiple Docker containers. 
@@ -71,4 +73,32 @@ This is a simple AMQP listener which receives a ping request and creates a ping 
 ### Challenges
 
 - Must load instrumentation modules prior to the libraries they instrument
-- Loki log querying reported quite a few errors 
+- Loki log querying reported quite a few errors. This lead to using MinIO for log storage. Unfortunately at the moment MinIO requires some manual setup. Will either fix that or try to go back to local storage.
+
+### MinIO Setup
+
+The MinIO by default is on port 9001 and can be accessed via [http://localhost:9001](http://localhost:9001/). It's setup with the following credentials:
+
+- **Username**: `minio`
+- Password: `secret-secret`
+
+Need to add the following **buckets**:
+
+- loki
+- mimir
+- tempo
+
+Tempo also requires a key at the moment as well.
+
+Create an **Access Key** with the following:
+
+- **Access Key**: `tempo`
+- **Secret Key**: `secret-secret`
+
+Obviously, I went for *really* secure here. Once these have been added, you will need to restart the following containers:
+
+- loki
+- mimir
+- tempo
+
+Provided you do not delete any of the docker volumes, this should only need to be done once.
