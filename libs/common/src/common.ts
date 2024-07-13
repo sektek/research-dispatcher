@@ -13,6 +13,7 @@ export * from './http/http-processor.js';
 export * from './promise-channel.js';
 export * from './logger.js';
 export * from './ping-request-event.js';
+export * from './ping-request-handler.js';
 export * from './ping-response-event.js';
 export * from './promise-channel.js';
 export * from './http/request.js';

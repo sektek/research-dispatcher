@@ -4,6 +4,7 @@ import {
   PingRequestEvent,
   PingResponseEvent,
   SimpleProcessor,
+  pingRequestHandler,
 } from '@sektek/common';
 
 const amqpDispatcher = await AmqpDispatcher.from({
@@ -12,16 +13,7 @@ const amqpDispatcher = await AmqpDispatcher.from({
 });
 
 const processor = new SimpleProcessor<PingRequestEvent, PingResponseEvent>({
-  handler: async event => {
-    return {
-      ...event,
-      type: 'PingResponse',
-      data: {
-        ...(event.data ?? {}),
-        receivedAt: new Date().getTime(),
-      },
-    };
-  },
+  handler: pingRequestHandler,
   responseHandler: amqpDispatcher,
 });
 

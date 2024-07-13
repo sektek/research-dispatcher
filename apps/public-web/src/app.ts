@@ -4,6 +4,7 @@ import {
   HttpGateway,
   HttpProcessor,
   SingleUseRouter,
+  pingRequestHandler,
 } from '@sektek/common';
 import { Router as ExpressRouter } from 'express';
 
@@ -25,16 +26,7 @@ const httpProcessor = new HttpProcessor({
 const httpResponseGateway = new HttpGateway({ handler: router });
 
 const httpPingProcessor = new HttpProcessor({
-  handler: async event => {
-    return {
-      ...event,
-      type: 'PingResponse',
-      data: {
-        ...(event.data ?? {}),
-        receivedAt: new Date().getTime(),
-      },
-    };
-  },
+  handler: pingRequestHandler,
 });
 
 app.post('/', httpProcessor.requestHandler);
