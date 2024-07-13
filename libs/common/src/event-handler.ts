@@ -7,8 +7,6 @@ export type EventHandlerFn<T extends Event, R extends EventReturnType> = (
   event: T,
 ) => Promise<R>;
 
-export type EventChannelFn<T extends Event> = EventHandlerFn<T, void>;
-
 export interface EventHandler<T extends Event, R extends EventReturnType> {
   handle: EventHandlerFn<T, R>;
 }
