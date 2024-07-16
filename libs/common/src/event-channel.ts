@@ -17,8 +17,10 @@ export const isEventChannel = (obj: unknown): obj is EventChannel<Event> =>
   !isPrimitive(obj) &&
   (obj as EventChannel<Event>).send instanceof Function;
 
-export class NullChannel {
+export class NullChannel<T extends Event> implements EventChannel<T> {
   static send(): Promise<void> {
     return Promise.resolve();
   }
+
+  send = NullChannel.send;
 }
