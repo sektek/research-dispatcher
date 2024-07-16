@@ -39,7 +39,8 @@ export type RouteProviderFn<T extends Event> = (
   event: T,
 ) => Promise<EventChannelFn<T>>;
 
-const DEFAULT_ROUTE_PROVIDER: RouteProviderFn<Event> = async () => NullChannel.send;
+const DEFAULT_ROUTE_PROVIDER: RouteProviderFn<Event> = async () =>
+  NullChannel.send;
 
 export interface RouteProvider<T extends Event> {
   get: RouteProviderFn<T>;
@@ -121,7 +122,8 @@ export class EventRouter<T extends Event>
     this.routeProvider =
       options.routeProvider instanceof Function
         ? options.routeProvider
-        : options.routeProvider?.get ?? DEFAULT_ROUTE_PROVIDER;
+        : options.routeProvider?.get?.bind(options.routeProvider) ??
+          DEFAULT_ROUTE_PROVIDER;
   }
 
   async send(event: T): Promise<void> {

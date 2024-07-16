@@ -55,6 +55,6 @@ export class EventRelayProcessor<T extends Event, R extends Event>
       this.#channelMap.delete(route);
     }
 
-    return channel?.send ?? this.#defaultChannel.send;
+    return channel?.send?.bind(channel) ?? this.#defaultChannel.send;
   }
 }
