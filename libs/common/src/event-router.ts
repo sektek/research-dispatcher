@@ -15,7 +15,7 @@ export type EventRouteDecider<T extends Event> = (event: T) => Promise<string>;
 
 const DEFAULT_ROUTE_DECIDER: EventRouteDecider<Event> = async () => '';
 
-type EventRoute<T extends Event> =
+export type EventRoute<T extends Event> =
   | EventChannel<T>
   | EventDispatcher<T>
   | EventHandler<T, unknown>
@@ -35,30 +35,41 @@ const eventRouteToChannelFn = <T extends Event>(
   });
 };
 
-interface EventRouterOptions<T extends Event> extends EventServiceOptions {
-  routeDecider?: EventRouteDecider<T>;
+export type RouteProviderFn<T extends Event> = (
+  event: T,
+) => Promise<EventChannelFn<T>>;
+
+const DEFAULT_ROUTE_PROVIDER: RouteProviderFn<Event> = async () => NullChannel.send;
+
+export interface RouteProvider<T extends Event> {
+  get: RouteProviderFn<T>;
+}
+
+interface RouteStoreOptions<T extends Event> extends EventServiceOptions {
+  routeDecider: EventRouteDecider<T>;
   defaultRoute?: EventRoute<T>;
 }
 
-const DEFAULT_ROUTER_OPTIONS: EventRouterOptions<Event> = {
-  defaultRoute: NullChannel,
+const DEFAULT_ROUTE_STORE_OPTIONS: RouteStoreOptions<Event> = {
   routeDecider: DEFAULT_ROUTE_DECIDER,
+  defaultRoute: NullChannel,
 };
 
-export class EventRouter<T extends Event>
+export class RouteStore<T extends Event>
   extends AbstractEventService
-  implements EventChannel<T>
+  implements RouteProvider<T>
 {
-  private readonly routes: Map<string, EventChannelFn<T>> = new Map();
-  protected readonly routeDecider: EventRouteDecider<T>;
-  private readonly defaultRoute: EventChannelFn<T>;
+  protected routeDecider: EventRouteDecider<T>;
+  routes: Map<string, EventChannelFn<T>> = new Map();
+  protected readonly defaultRoute: EventChannelFn<T>;
 
-  constructor(options: EventRouterOptions<T> = DEFAULT_ROUTER_OPTIONS) {
-    super(options);
+  constructor(options: RouteStoreOptions<T> = DEFAULT_ROUTE_STORE_OPTIONS) {
+    super({ ...DEFAULT_ROUTE_STORE_OPTIONS, ...options });
 
+    options = { ...DEFAULT_ROUTE_STORE_OPTIONS, ...options };
     this.routeDecider = options.routeDecider ?? DEFAULT_ROUTE_DECIDER;
     this.defaultRoute = eventRouteToChannelFn(
-      `${this.name}-default`,
+      `${this.name}-DEFAULT`,
       options.defaultRoute ?? NullChannel,
     );
   }
@@ -70,22 +81,51 @@ export class EventRouter<T extends Event>
     );
   }
 
+  async get(event: T): Promise<EventChannelFn<T>> {
+    const route = await this.routeDecider(event);
+    return this.routes.get(route) ?? this.defaultRoute;
+  }
+
   remove(route: string): void {
     this.routes.delete(route);
   }
+}
 
-  async send(event: T, route?: string): Promise<void> {
-    route ??= await this.routeDecider(event);
-    const handler = this.routes.get(route) ?? this.defaultRoute;
+export class SingleUseRouteStore<T extends Event> extends RouteStore<T> {
+  async get(event: T): Promise<EventChannelFn<T>> {
+    const route = await this.routeDecider(event);
+    const handler = this.routes.get(route);
+    this.remove(route);
 
-    await handler(event);
+    return handler ?? this.defaultRoute;
   }
 }
 
-export class SingleUseRouter<T extends Event> extends EventRouter<T> {
-  async send(event: T, route?: string): Promise<void> {
-    route ??= await this.routeDecider(event);
-    await super.send(event, route);
-    this.remove(route);
+interface EventRouterOptions<T extends Event> extends EventServiceOptions {
+  routeProvider?: RouteProvider<T> | RouteProviderFn<T>;
+}
+
+const DEFAULT_ROUTER_OPTIONS: EventRouterOptions<Event> = {
+  routeProvider: DEFAULT_ROUTE_PROVIDER,
+};
+
+export class EventRouter<T extends Event>
+  extends AbstractEventService
+  implements EventChannel<T>
+{
+  private readonly routeProvider: RouteProviderFn<T>;
+
+  constructor(options: EventRouterOptions<T> = DEFAULT_ROUTER_OPTIONS) {
+    super(options);
+
+    this.routeProvider =
+      options.routeProvider instanceof Function
+        ? options.routeProvider
+        : options.routeProvider?.get ?? DEFAULT_ROUTE_PROVIDER;
+  }
+
+  async send(event: T): Promise<void> {
+    const handler = await this.routeProvider(event);
+    await handler(event);
   }
 }
