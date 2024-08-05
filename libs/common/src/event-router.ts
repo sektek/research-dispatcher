@@ -21,7 +21,7 @@ export type EventRoute<T extends Event> =
   | EventHandler<T, unknown>
   | EventHandlerFn<T, unknown>;
 
-const eventRouteToChannelFn = <T extends Event>(
+export const eventRouteToChannelFn = <T extends Event>(
   name: string,
   handler: EventRoute<T>,
 ): EventChannelFn<T> => {
