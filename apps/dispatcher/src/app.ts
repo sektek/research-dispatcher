@@ -1,8 +1,9 @@
 import {
   AmqpDispatcher,
   AmqpGateway,
-  HttpDispatcher,
+  EventRouter,
   HttpGateway,
+  HttpResponseRouteProvider,
 } from '@sektek/common';
 import { Router as ExpressRouter } from 'express';
 
@@ -17,9 +18,8 @@ const httpGateway = new HttpGateway({
   handler: amqpDispatcher,
 });
 
-const httpDispatcher = new HttpDispatcher({
-  url: 'http://public-web:3000/dispatch',
-});
+const routeProvider = new HttpResponseRouteProvider({ httpGateway });
+const httpDispatcher = new EventRouter({ routeProvider });
 
 const amqpGateway = await AmqpGateway.from({
   url: 'amqp://dispatcher-mq:5672',

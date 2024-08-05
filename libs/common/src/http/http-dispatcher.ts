@@ -24,16 +24,20 @@ export class HttpDispatcher<T extends Event = Event>
     );
     this.logger.debug(event);
 
-    const res = await fetch(this.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(event),
-    });
+    try {
+      const res = await fetch(this.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(event),
+      });
 
-    if (res.status !== 201) {
-      throw new Error(`Unexpected status code: ${res.status}`);
+      if (res.status !== 201) {
+        throw new Error(`Unexpected status code: ${res.status}`);
+      }
+    } catch (err) {
+      this.logger.error({ eventId: event.id, error: err });
     }
   }
 }

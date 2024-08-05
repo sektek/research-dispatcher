@@ -8,6 +8,7 @@ import {
 } from './event-handler.js';
 import { Tracer, trace } from '@opentelemetry/api';
 import { Event } from './event.js';
+import EventEmitter from 'events';
 import { Logger } from 'winston';
 import { logger } from './logger.js';
 
@@ -32,12 +33,14 @@ const generateName = (prefix: string): string => {
   return `${prefix}#${id}`;
 };
 
-export abstract class AbstractEventService {
+export abstract class AbstractEventService extends EventEmitter {
   #logger: Logger;
   #name: string;
   #tracer: Tracer;
 
   constructor(opts: EventServiceOptions) {
+    super();
+
     this.#name = generateName(opts.name || this.constructor.name);
     this.#logger = (opts.logger || logger).child({ component: this.name });
     this.#tracer = trace.getTracer('common', '0.1.0');
@@ -80,11 +83,17 @@ export abstract class AbstractEventHandlingService<
   async handle(event: T): Promise<R> {
     return this.tracer.startActiveSpan(this.name, span => {
       try {
+        this.emit('event:received', event);
         this.logger.info(
           `${this.name} - Event (${event.type}) ${event.id} received`,
         );
-        this.logger.debug(event);
-        return this.handler(event);
+        this.logger.debug({ event });
+
+        const response = this.handler(event);
+        this.logger.debug({ response });
+        this.emit('event:processed', event, response);
+
+        return response;
       } finally {
         span.end();
       }
