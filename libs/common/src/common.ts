@@ -10,6 +10,7 @@ export * from './event-router.js';
 export * from './http/http-dispatcher.js';
 export * from './http/http-gateway.js';
 export * from './http/http-processor.js';
+export * from './http/http-server.js';
 export * from './promise-channel.js';
 export * from './logger.js';
 export * from './ping-request-event.js';
