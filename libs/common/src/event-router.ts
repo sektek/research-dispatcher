@@ -56,7 +56,7 @@ const DEFAULT_ROUTE_STORE_OPTIONS: RouteStoreOptions<Event> = {
   defaultRoute: NullChannel,
 };
 
-export class RouteStore<T extends Event>
+export class SimpleRouteStore<T extends Event>
   extends AbstractEventService
   implements RouteProvider<T>
 {
@@ -92,7 +92,7 @@ export class RouteStore<T extends Event>
   }
 }
 
-export class SingleUseRouteStore<T extends Event> extends RouteStore<T> {
+export class SingleUseRouteStore<T extends Event> extends SimpleRouteStore<T> {
   async get(event: T): Promise<EventChannelFn<T>> {
     const route = await this.routeDecider(event);
     const handler = this.routes.get(route);
